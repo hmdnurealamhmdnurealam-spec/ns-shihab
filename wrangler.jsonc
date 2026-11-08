@@ -3,10 +3,6 @@
   "main": "ht-bazar-worker.js",
   "compatibility_date": "2025-10-01",
   "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "ht-bazar-db",
-      "database_id": "9578c460-bf87-4677-a805-7e7b4f2a69f3"
-    }
+    { "binding": "DB" }
   ]
 }

@@ -46,10 +46,18 @@ async function createOrder(req, env) {
   return json({ ok: true, id: r.meta.last_row_id });
 }
 
+let ready = false;
+async function ensureSchema(env) {
+  if (ready) return;
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER NOT NULL, product TEXT NOT NULL, unit TEXT, qty REAL NOT NULL, total INTEGER NOT NULL, name TEXT NOT NULL, phone TEXT NOT NULL, address TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'new', created_at TEXT NOT NULL DEFAULT (datetime('now')))").run();
+  ready = true;
+}
+
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
     const path = url.pathname;
+    if (path.startsWith('/api/')) await ensureSchema(env);
     if (path === '/api/orders' && req.method === 'POST') return createOrder(req, env);
     if (path.startsWith('/api/')) {
       if (!(await isAdmin(req, env))) return json({ error: 'পাসওয়ার্ড ভুল' }, 401);
